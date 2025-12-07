@@ -1,136 +1,75 @@
-/* ===========================================================
-   V12 - RUSTY RACCOON (CHAT RESTORED & ORANGE THEME)
-   =========================================================== */
-
 :root {
-    --rust-bg: #101010 !important;
-    --rust-panel: #1a1a1a !important;
-    --rust-input: #000000 !important;
-    --rust-orange: #ff5722 !important;     /* Naranja Óxido */
-    --rust-neon: #ff9100 !important;       /* Naranja Neón (Texto/Bordes) */
-    --rust-text-main: #e0e0e0 !important;
+    --bg: #101010; --panel: #1a1a1a; --input: #000;
+    --acc-orange: #ff5722; --acc-neon: #ff9100;
+    --text: #e0e0e0;
 }
 
-/* 1. RESET GLOBAL Y PERFORMANCE GRAFICA */
-body, html, main {
-    background-color: var(--rust-bg) !important;
-    color: var(--rust-text-main) !important;
+/* 1. RESET Y BASE */
+body, html, main, footer {
+    background: var(--bg) !important;
+    color: var(--text) !important;
     font-family: 'Consolas', monospace !important;
-    text-rendering: optimizeSpeed !important; /* Priorizar velocidad sobre letras bonitas */
 }
 
-/* Matar animaciones globales para que se sienta instantáneo */
-* {
-    transition: none !important;
-    animation: none !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important; /* ESTO causa lag al hacer scroll/escribir */
-}
+/* Ocultar elementos innecesarios */
+a[href="#main"], .visually-hidden, mat-sidenav[position="end"] { display: none !important; }
 
-/* Ocultar elementos inútiles */
-a[href="#main"], .visually-hidden, mat-sidenav[position="end"] {
-    display: none !important;
-}
-
-/* ===========================================================
-   2. EL INPUT (ESCRIBIR SUPER RÁPIDO)
-   =========================================================== */
-
-/* Footer sólido y sin transparencias para evitar recalculos de GPU */
-footer, .turn-input-container, .input-area-wrapper {
-    background-color: var(--rust-panel) !important;
-    border-top: 2px solid var(--rust-neon) !important;
-    opacity: 1 !important;
-}
-
-textarea {
-    background-color: var(--rust-input) !important;
-    color: var(--rust-neon) !important;
-    caret-color: #fff !important;
-    font-family: 'Consolas', monospace !important;
-    font-size: 15px !important;
-    border: 1px solid #333 !important;
-    border-left: 5px solid var(--rust-orange) !important;
-    
-    /* TRUCOS ANTI-LAG PARA TEXTAREA */
-    resize: none !important; /* Resize causa 'reflow' masivo */
-    will-change: contents; /* Avisar al navegador */
-}
-
-/* Iconos de botones (Enviar/Adjuntar) más visibles */
-button mat-icon {
-    color: var(--rust-neon) !important;
-    opacity: 1 !important;
-}
-
-/* ===========================================================
-   3. VISUALIZACIÓN DEL CHAT (ZORRO STYLE)
-   =========================================================== */
-
-/* Bloques Generales: Aseguramos visibilidad y quitamos lag gráfico */
+/* 2. CHAT & BUBBLES */
 ms-chat-bubble, .turn-container {
-    opacity: 1 !important;
-    visibility: visible !important;
-    display: block !important;
-    margin-bottom: 20px !important;
+    opacity: 1 !important; visibility: visible !important;
+    margin-bottom: 20px !important; display: block !important;
     border: none !important;
-    contain: layout style !important; /* Optimización segura (no strict) */
 }
 
-/* USUARIO: Estilo Naranja Marcado */
+/* Usuario (Naranja) vs Modelo (Sutil) empiezo a pensar que debo modificar esto */
 [data-role="user"], .user-turn {
     background: #191919 !important;
-    border-left: 4px solid var(--rust-neon) !important;
-    padding: 10px 15px !important;
+    border-left: 4px solid var(--acc-neon) !important;
     border-radius: 0 10px 10px 0 !important;
+    padding: 10px 15px !important;
 }
 
-/* IA: Estilo Gris/Sutil */
 [data-role="model"], .model-turn {
     background: transparent !important;
-    border-left: 2px solid #444 !important;
+    border-left: 2px solid #333 !important;
     padding: 10px !important;
 }
 
-/* CÓDIGO */
-.code-block, pre, code {
-    background: #080808 !important;
-    border: 1px solid #333 !important;
-    color: #aebecd !important; /* Azul grisáceo legible */
-}
-.code-header {
-    background: #222 !important;
-    border-bottom: 1px solid var(--rust-orange) !important;
+/* 3. INPUT AREA & PERFORMANCE */
+.turn-input-container, .input-area-wrapper, footer {
+    background: var(--panel) !important;
+    border-top: 1px solid var(--acc-neon) !important;
 }
 
-/* HUD DEL ZORRO */
-#racco-hud {
-    position: fixed;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    background: #000;
-    border: 2px solid var(--rust-neon);
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-    z-index: 999999;
-    padding: 5px 20px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
+textarea {
+    background: var(--input) !important;
+    color: var(--acc-neon) !important;
+    caret-color: #fff !important;
+    border: 1px solid #333 !important;
+    border-left: 4px solid var(--acc-orange) !important;
+    resize: none !important;
 }
-.racco-title { 
-    color: var(--rust-neon); 
-    font-weight: bold; 
-    font-size: 14px; 
-    text-transform: uppercase; 
+
+/* Estilo código in dev */
+pre, code, .code-block { background: #080808 !important; border: 1px solid #333 !important; }
+.code-header { background: #222 !important; border-bottom: 1px solid var(--acc-orange) !important; }
+
+/* 4. HUD */
+#rf-hud {
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+    background: #000; border: 1px solid var(--acc-neon); border-top: 0;
+    border-radius: 0 0 8px 8px; z-index: 99999;
+    padding: 4px 15px; display: flex; gap: 15px; align-items: center;
 }
-.racco-btn {
-    background: #222;
-    border: 1px solid #555;
-    color: white;
-    padding: 4px 10px;
-    cursor: pointer;
-    font-size: 11px;
-    transition: none;
+
+.rf-link {
+    color: var(--acc-neon); font-weight: bold; font-size: 13px;
+    text-decoration: none; text-transform: uppercase; cursor: pointer;
 }
-.racco-btn:hover { background: var(--rust-orange); color: black; }
+.rf-link:hover { text-shadow: 0 0 5px var(--acc-orange); }
+
+.rf-controls button {
+    background: #222; border: 1px solid #444; color: #fff;
+    padding: 2px 8px; font-size: 11px; cursor: pointer; margin-left: 5px;
+}
+.rf-controls button:hover { background: var(--acc-orange); color: #000; border-color: var(--acc-neon); }

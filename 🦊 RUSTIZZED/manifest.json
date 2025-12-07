@@ -1,20 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "🦊 RUSTIZZED v3.1b",
-  "version": "3.1",
-  "description": "Corrección de renderizado del chat, input acelerado y estética naranja restaurada.",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "name": "🦊 RUSTIZZED v3.2",
+  "version": "3.2",
+  "description": "Chat optimizado, multiidioma y fix de contexto.",
+  "permissions": ["activeTab", "scripting"],
   "host_permissions": ["https://aistudio.google.com/*"],
-    "icons": {
-    "16": "logo.png",
-    "48": "logo.png",
-    "128": "logo.png"
-  },
+  "icons": { "16": "logo.png", "48": "logo.png", "128": "logo.png" },
   "web_accessible_resources": [
-    {
-      "resources": ["logo.ico"],
-      "matches": ["https://aistudio.google.com/*"]
-    }
+    { "resources": ["logo.ico"], "matches": ["https://aistudio.google.com/*"] }
   ],
   "content_scripts": [
     {

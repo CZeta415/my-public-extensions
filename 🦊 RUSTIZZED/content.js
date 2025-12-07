@@ -1,104 +1,101 @@
-console.log("RUSTIZZED LOADED! 🦊⚡");
+// CONFIGURACIÓN DE IDIOMA Y RECURSOS
+const CONFIG = {
+    repo: "https://github.com/CZeta415/my-public-extensions",
+    lang: navigator.language.split('-')[0], // 'es', 'en', 'pt'
+    dict: {
+        es: { title: "🦊 RUSTIZZED v3.2", reload: "Recargar", fast: "⚡ Turbo", alert: "Estilos reaplicados." },
+        en: { title: "🦊 RUSTIZZED v3.2", reload: "Reload", fast: "⚡ Turbo", alert: "Styles reapplied." },
+        pt: { title: "🦊 RUSTIZZED v3.2", reload: "Recarregar", fast: "⚡ Turbo", alert: "Estilos reaplicados." }
+    }
+};
 
-function init() {
-    createHUD();
-    changeIcon();
-    startObserver();
-    // Ejecutar una pasada inicial de estilos
-    applyRaccoonStyles();
-    
-    // Configuración para el Input ultra-rápido
-    setInterval(optimizeInputArea, 2000); 
-}
+class RustFox {
+    constructor() {
+        this.txt = CONFIG.dict[CONFIG.lang] || CONFIG.dict.en;
+        this.observer = null;
+        this.iconInterval = null;
+        this.isAlive = true;
+    }
 
-// 1. CAMBIAR EL ICONO DE LA PESTAÑA (Usando logo.ico)
-function changeIcon() {
-    const link = document.createElement('link');
-    link.type = 'image/x-icon';
-    link.rel = 'shortcut icon';
-    link.href = chrome.runtime.getURL("logo.ico");
-    
-    const head = document.getElementsByTagName('head')[0];
-    // Borrar antiguos
-    document.querySelectorAll("link[rel*='icon']").forEach(e => e.remove());
-    head.appendChild(link);
-}
-
-// 2. HUD DEL ZORRO
-function createHUD() {
-    if(document.getElementById('racco-hud')) return;
-    const div = document.createElement('div');
-    div.id = 'racco-hud';
-    div.innerHTML = `
-        <span class="racco-title">🦊 RUSTIZZED v3.1b</span>
-        <button id="btn-fix-chat" class="racco-btn">Recargar Chat</button>
-        <button id="btn-turbo" class="racco-btn">⚡ Fast Input</button>
-    `;
-    document.body.appendChild(div);
-    
-    document.getElementById('btn-fix-chat').onclick = () => {
-        applyRaccoonStyles();
-        alert("Estilos reaplicados");
-    };
-    
-    document.getElementById('btn-turbo').onclick = () => {
-        optimizeInputArea(true);
-    };
-}
-
-// 3. OPTIMIZAR EL ÁREA DE ESCRITURA (LA CLAVE DEL NO-LAG)
-function optimizeInputArea(force = false) {
-    const ta = document.querySelector('textarea');
-    if (!ta) return;
-
-    // Desactivar funciones costosas del navegador
-    // "Spellcheck" y "Autocorrect" consumen MUCHA CPU mientras escribes.
-    if (ta.getAttribute('spellcheck') !== 'false' || force) {
-        ta.setAttribute('spellcheck', 'false');
-        ta.setAttribute('autocomplete', 'off');
-        ta.setAttribute('autocorrect', 'off');
-        ta.setAttribute('autocapitalize', 'off');
-        ta.setAttribute('data-gramm', 'false'); // Intenta desactivar Grammarly
+    init() {
+        console.log("🦊 RUSTIZZED: Ready.");
+        this.buildHUD();
+        this.setFavicon(); // Ejecutar inmediatamente
+        this.optimizeInput(true); // Pasada inicial
+        this.observeDOM();
         
-        console.log("🦊 Input optimizado para velocidad máxima.");
+        // Loop de seguridad para icono y optimización
+        this.iconInterval = setInterval(() => {
+            if (!this.checkContext()) return;
+            this.setFavicon();
+            this.optimizeInput();
+        }, 4000);
+    }
+
+    // Previene error
+    checkContext() {
+        if (!chrome?.runtime?.id) {
+            this.isAlive = false;
+            clearInterval(this.iconInterval);
+            if (this.observer) this.observer.disconnect();
+            console.warn("🦊 Extension actualizada o recargada. Deteniendo script huérfano.");
+            return false;
+        }
+        return true;
+    }
+
+    buildHUD() {
+        if (document.getElementById('rf-hud')) return;
+        
+        const hud = document.createElement('div');
+        hud.id = 'rf-hud';
+        hud.innerHTML = `
+            <a href="${CONFIG.repo}" target="_blank" class="rf-link" title="Visit GitHub">${this.txt.title}</a>
+            <div class="rf-controls">
+                <button id="rf-fix">${this.txt.reload}</button>
+                <button id="rf-turbo">${this.txt.fast}</button></div>`;
+        document.body.appendChild(hud);
+
+        document.getElementById('rf-fix').onclick = () => { this.styleChat(); alert(this.txt.alert); };
+        document.getElementById('rf-turbo').onclick = () => this.optimizeInput(true);
+    }
+
+    setFavicon() {
+        if (!this.isAlive) return;
+        try {
+            // Eliminar anteriores para evitar acumulación
+            document.querySelectorAll("link[rel*='icon']").forEach(e => e.remove());
+            const link = document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = chrome.runtime.getURL("logo.ico");
+            document.head.appendChild(link);
+        } catch (e) { this.checkContext(); }
+    }
+
+    optimizeInput(force = false) {
+        const el = document.querySelector('textarea');
+        if (!el || (!force && el.dataset.optimized)) return;
+        
+        // Desactiva correctores pesados
+        ['spellcheck', 'autocomplete', 'autocorrect', 'autocapitalize'].forEach(a => el.setAttribute(a, 'false'));
+        el.dataset.optimized = "true";
+    }
+
+    styleChat() {
+        const bubbles = document.querySelectorAll('ms-chat-bubble, .turn-container');
+        bubbles.forEach(b => {
+            const isUser = b.innerHTML.includes('user-icon') || b.innerText.includes('You') || b.innerText.includes('Tú') || b.classList.contains('user-turn');
+            b.setAttribute('data-role', isUser ? 'user' : 'model');
+        });
+    }
+
+    observeDOM() {
+        this.observer = new MutationObserver((mutations) => {
+            if (mutations.some(m => m.addedNodes.length)) this.styleChat();
+        });
+        this.observer.observe(document.body, { childList: true, subtree: true });
     }
 }
-
-// 4. EL OBSERVER (Asegura que los mensajes nuevos tengan el color naranja)
-function startObserver() {
-    const observer = new MutationObserver((mutations) => {
-        // Solo actuar si se agregan nodos significativos
-        const needsUpdate = mutations.some(m => m.addedNodes.length > 0);
-        if (needsUpdate) {
-            applyRaccoonStyles();
-        }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-}
-
-// 5. APLICAR ESTILOS A MENSAJES
-function applyRaccoonStyles() {
-    // Buscamos cualquier contenedor que parezca un turno
-    // ms-chat-bubble, turn-container, o divs genéricos dentro del área de historial
-    const bubbles = document.querySelectorAll('ms-chat-bubble, .turn-container');
-    
-    bubbles.forEach(bubble => {
-        // Lógica simple de detección:
-        // Si tiene icono de usuario O dice "You"/"Tu" -> Usuario
-        const isUser = bubble.innerHTML.includes('user-icon') || 
-                       bubble.innerText.includes('You') || 
-                       bubble.classList.contains('user-turn');
-
-        if (isUser) {
-            bubble.setAttribute('data-role', 'user');
-        } else {
-            bubble.setAttribute('data-role', 'model');
-        }
-    });
-}
-
-// Iniciar con seguridad
-window.onload = init;
-// Backup por si ya cargó
-setTimeout(init, 1500);
-setInterval(changeIcon, 5000); // Forzar icono cada tanto si Google lo cambia
+// Inicialización segura
+setTimeout(() => new RustFox().init(), 1000);
