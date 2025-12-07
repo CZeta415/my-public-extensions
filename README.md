@@ -10,7 +10,7 @@ Welcome to my personal collection of browser extensions (Chrome, Thorium, Brave,
 
 ## 🔥 Featured: RUSTIZZED
 
-![Banner Rustizzed](./assets/banner-rustizzed.png) 
+![Banner Rustizzed](./assets/RUSTIZZED.jpg) 
 
 ### 🦊 RUSTIZZED AI STUDIO (v3.2)
 **A massive overhaul for Google AI Studio!**
