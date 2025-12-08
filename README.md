@@ -14,7 +14,7 @@ Welcome to my personal collection of browser extensions (Chrome, Thorium, Brave,
 
 ### 🦊 RUSTIZZED AI STUDIO (v3.2)
 **A massive overhaul for Google AI Studio!**
-It eliminates typing lag, fixes chat rendering issues, applies a new clean aesthetic inspired by foxes (Rusty/Orange theme), and **fixes over 70 console errors** present in the original page.
+It eliminates typing lag, fixes chat rendering issues, applies a new clean aesthetic inspired by foxes (Rusty/Orange theme), and **fixes over 27 console errors** present in the original page.
 
 | Feature | Description |
 | :--- | :--- |
